@@ -55,32 +55,46 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  // Add More names to myNames
-  // use a number to track the index of the name you want to use.
-  // Cycle through the names when you press the button, incrementing the number
-  // When you reach the highest index, reset the number back to 0
-  // Make sure that it's dynamic so if you add/remove names from the list, it still functions.
-
   final List<String> _myNames = [
     "Dan",
-    "Steve"
+    "Steve",
+    "Nate",
+    "Better Dan",
+    "Best Dan",
+    "Evil Dan",
+    "Dan the Man",
+    "Dan the Myth",
+    "Dan the Legend",
+    "Dan the Great",
+    "Dan the Terrible",
+    "Dan the Destroyer",
+    "Dan the Conqueror",
+    "Dan the Magnificent",
+    "Dan the Wise",
+    "Dan the Foolish",
+    "Dan the Brave",
+    "Dan the Cowardly",
+    "Dan the Bold",
+    "Dan the Timid",
+    "Dan the Strong",
+    "Anti-Dan",
   ];
+
+  int _nameIndex = 0;
 
   String? _myName;
 
   @override
   void initState() {
     super.initState();
-    _myName = _myNames[0];   
-    
+    _myName = _myNames[_nameIndex];
   }
 
-  void onPressed(){
+  void onPressed() {
     setState(() {
-      _myName = _myNames[1];
+      _nameIndex = (_nameIndex + 1) % _myNames.length;
+      _myName = _myNames[_nameIndex];
     });
-    
   }
 
   @override
@@ -132,11 +146,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             TextButton(
-              onPressed: onPressed, 
-              child: const Text("Press Me Please!!!!"))
+                onPressed: onPressed, child: const Text("Press Me Please!!!!"))
           ],
         ),
       ),
-     );
+    );
   }
 }
