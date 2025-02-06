@@ -24,21 +24,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: title,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -66,6 +51,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController stateController = TextEditingController();
+  final TextEditingController zipController = TextEditingController();
+
 
   List<forecast.Forecast> _forecastsHourly = [];
   List<forecast.Forecast> _filteredForecastsHourly= [];
@@ -118,25 +108,26 @@ class _MyHomePageState extends State<MyHomePage> {
     return _forecastsHourly.where((f)=>time.equalDates(f.startTime, _dailyForecasts[i].startTime)).toList();
   }
 
-  void setLocation() async {
-    if (_location == null){
-      location.Location currentLocation = await location.getLocationFromGps();
+  void setLocation([String? city, String? state, String? zip]) async {
+    location.Location? currentLocation;
+    if (city == null || state == null || zip == null){
+      currentLocation = await location.getLocationFromGps();
+    }else{
+      currentLocation = (await location.getLocationFromAddress(city,state, zip))!;
+    }
 
-      List<forecast.Forecast> currentHourlyForecasts = await getHourlyForecasts(currentLocation);
-      List<forecast.Forecast> currentForecasts = await getForecasts(currentLocation);
+    List<forecast.Forecast> currentHourlyForecasts = await getHourlyForecasts(currentLocation);
+    List<forecast.Forecast> currentForecasts = await getForecasts(currentLocation);
 
-      setState(() {
-        _location = currentLocation;
-        _forecastsHourly = currentHourlyForecasts;
-        _forecasts = currentForecasts;
-        setDailyForecasts();
-        _filteredForecastsHourly = getFilteredForecasts(0);
-        _activeForecast = _forecastsHourly[0];
-        
-        
+    setState(() {
+      _location = currentLocation;
+      _forecastsHourly = currentHourlyForecasts;
+      _forecasts = currentForecasts;
+      setDailyForecasts();
+      _filteredForecastsHourly = getFilteredForecasts(0);
+      _activeForecast = _forecastsHourly[0];
       });
     }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,23 +164,78 @@ class _MyHomePageState extends State<MyHomePage> {
             filteredForecastsHourly: _filteredForecastsHourly,
             setActiveForecast: setActiveForecast,
             setActiveHourlyForecast: setActiveHourlyForecast),
-          LocationTabWidget()]
+          LocationTabWidget(
+        cityController: cityController,
+        stateController: stateController,
+        zipController: zipController,
+        onSubmit: () => setLocation(cityController.text, stateController.text, zipController.text)
+      )]
         ),
       ),
     );
   }
 }
 
-// TODO: Add a button to this widget that sets the active location to the phone's GPS location
-// TODO: Add 3 text fields for city state zip and a submit button that sets the location based on the user's entries
 class LocationTabWidget extends StatelessWidget {
+  final TextEditingController cityController;
+  final TextEditingController stateController;
+  final TextEditingController zipController;
+  final VoidCallback onSubmit;
+
   const LocationTabWidget({
     super.key,
+    required this.cityController,
+    required this.stateController,
+    required this.zipController,
+    required this.onSubmit,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Text("PLACEHOLDER!!!!!");
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Center(
+        child: Column(
+          children: [
+            const Text("Location Tab"),
+            ElevatedButton(
+              onPressed: () {
+                // Set location to GPS
+              },
+              child: const Text("Set Location to GPS"),
+            ),
+            TextField(
+              controller: cityController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'City',
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: stateController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'State',
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: zipController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Zip',
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: onSubmit,
+              child: const Text("Set Location"),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
