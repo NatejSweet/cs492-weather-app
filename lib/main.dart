@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<forecast.Forecast> _dailyForecasts = [];
   forecast.Forecast? _activeForecast;
   location.Location? _location;
+  List<location.Location> savedLocations = [];
 
   @override
   void initState() {
@@ -114,6 +115,9 @@ class _MyHomePageState extends State<MyHomePage> {
       setDailyForecasts();
       _filteredForecastsHourly = getFilteredForecasts(0);
       _activeForecast = _forecastsHourly[0];
+      if (!savedLocations.contains(currentLocation)){
+        savedLocations.add(currentLocation); 
+      }
     });
   }
 
@@ -141,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
             filteredForecastsHourly: _filteredForecastsHourly,
             setActiveForecast: setActiveForecast,
             setActiveHourlyForecast: setActiveHourlyForecast),
-          LocationTabWidget(setLocation: setLocation, activeLocation: _location)]
+          LocationTabWidget(setLocation: setLocation, activeLocation: _location, savedLocations: savedLocations)]
         ),
       ),
     );

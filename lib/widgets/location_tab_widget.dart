@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weatherapp/scripts/location.dart' as location;
+import 'package:weatherapp/widgets/saved_locations_widget.dart';
 
 
 // TODO: When the user clicks the Get From Location button:
@@ -12,14 +13,16 @@ import 'package:weatherapp/scripts/location.dart' as location;
 
 
 class LocationTabWidget extends StatelessWidget {
-  const LocationTabWidget({
+  LocationTabWidget({
     super.key,
-    required Function setLocation,
-    required location.Location? activeLocation
+    required final Function setLocation,
+    required final location.Location? activeLocation,
+    required final List<location.Location> savedLocations
   }) : _setLocation = setLocation, _location = activeLocation;
 
   final Function _setLocation;
   final location.Location? _location;
+  final List<location.Location> _savedLocations = [];
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,8 @@ class LocationTabWidget extends StatelessWidget {
       children: [
         LocationDisplayWidget(activeLocation: _location),
         LoctionInputWidget(setLocation: _setLocation),
-        ElevatedButton(onPressed: ()=>{_setLocation()},child: const Text("Get From GPS"))
+        ElevatedButton(onPressed: ()=>{_setLocation()},child: const Text("Get From GPS")),
+        SavedLocationsWidget(savedLocations: _savedLocations, setLocation: _setLocation)
       ],
     );
   }
@@ -70,6 +74,7 @@ class _LoctionInputWidgetState extends State<LoctionInputWidget> {
   late TextEditingController _cityController;
   late TextEditingController _stateController;
   late TextEditingController _zipController;
+  late List<location.Location> _savedLocations;
 
   // initialize Controllers
   @override
@@ -78,6 +83,7 @@ class _LoctionInputWidgetState extends State<LoctionInputWidget> {
     _cityController = TextEditingController();
     _stateController = TextEditingController();
     _zipController = TextEditingController();
+    _savedLocations = [];
 
   }
 
@@ -117,7 +123,7 @@ class _LoctionInputWidgetState extends State<LoctionInputWidget> {
               LocationTextWidget(width: 100, text: "zip", controller: _zipController, updateText: _updateZip),
             ],
           ),
-          ElevatedButton(onPressed: () {widget._setLocation([_city, _state, _zip]);}, child: Text("Get From Address"))
+          ElevatedButton(onPressed: () {widget._setLocation([_city, _state, _zip]); }, child: Text("Get From Address"))
         ],
       ),
     );
