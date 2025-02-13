@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:weatherapp/scripts/location.dart' as location;
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:convert';
 
 // TODO:
 // Refer to this documentation:
@@ -26,6 +29,7 @@ class LocationTabWidget extends StatefulWidget {
 class _LocationTabWidgetState extends State<LocationTabWidget> {
 
   final List<location.Location> _savedLocations = [];
+  late Directory dir;
 
   void _setLocationFromAddress(String city, String state, String zip) async {
     // set location to null temporarily while it finds a new location
@@ -47,6 +51,40 @@ class _LocationTabWidgetState extends State<LocationTabWidget> {
     setState(() {
       _savedLocations.add(location);
     });
+    writeLocationToFile(location);
+  }
+
+  void writeLocationToFile(location.Location location) async {
+    final file = File('${dir.path}/locations.json');
+    if (file.existsSync()){
+      final contents = file.readAsStringSync();
+      var jsonData = jsonDecode(contents);
+      jsonData.add(location.toJson());
+      file.writeAsStringSync(jsonEncode(jsonData));
+    } else {
+      file.createSync();
+      file.writeAsStringSync(jsonEncode([location.toJson()]));
+    }
+  }
+
+
+  @override
+  void initState(){
+    super.initState();
+    getSavedLocations();
+  }
+
+  void getSavedLocations() async {
+    dir = await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/locations.json');
+    if (file.existsSync()){
+      final contents = file.readAsStringSync();
+      final jsonData = jsonDecode(contents);
+      var savedLocations = (jsonData as List).map((loc) => location.Location.fromJson(loc)).toList();
+      setState(() {
+        _savedLocations.addAll(savedLocations);
+      });
+    }
   }
 
   @override

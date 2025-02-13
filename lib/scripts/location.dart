@@ -16,6 +16,25 @@ class Location{
     required this.longitude
   });
 
+  factory Location.fromJson(Map<String, dynamic> json) {
+    return Location(
+      state: json['state'],
+      city: json['city'],
+      zip: json['zip'],
+      latitude: json['latitude'],
+      longitude: json['longitude']
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'state': state,
+      'city': city,
+      'zip': zip,
+      'latitude': latitude,
+      'longitude': longitude
+    };
+  }
 }
 
 Future<Location?> getLocationFromAddress(String rawCity, String rawState, String rawZip) async {
