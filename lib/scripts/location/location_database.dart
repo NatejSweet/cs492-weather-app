@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'package:weatherapp/scripts/location.dart' as location;
+import 'package:weatherapp/scripts/location/location.dart' as location;
 
 const dbName = 'location.db';
 const sqlCreateTable = 'assets/sql/create.sql';

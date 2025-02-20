@@ -1,5 +1,5 @@
-import 'forecast.dart' as forecast;
-import 'location.dart' as location;
+import 'forecast/forecast.dart' as forecast;
+import 'location/location.dart' as location;
 
 // void main() async {
 //   testForecast();

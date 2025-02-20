@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:weatherapp/scripts/location.dart' as location;
+import 'package:weatherapp/scripts/location/location.dart' as location;
 
 class LocationWidget extends StatelessWidget {
   const LocationWidget({

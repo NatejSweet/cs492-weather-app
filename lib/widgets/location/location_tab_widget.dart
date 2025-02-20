@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weatherapp/scripts/location.dart' as location;
-import 'package:weatherapp/scripts/location_storage.dart' as locationStorage;
-import 'package:weatherapp/scripts/location_database.dart' as location_database;
+import 'package:weatherapp/scripts/location/location.dart' as location;
+import 'package:weatherapp/scripts/location/location_database.dart' as location_database;
 
 class LocationTabWidget extends StatefulWidget {
   const LocationTabWidget(
@@ -19,7 +18,6 @@ class LocationTabWidget extends StatefulWidget {
 }
 
 class _LocationTabWidgetState extends State<LocationTabWidget> {
-  final locationStorage.LocationStorage ls = locationStorage.LocationStorage();
 
   List<location.Location> _savedLocations = [];
 
@@ -43,16 +41,6 @@ class _LocationTabWidgetState extends State<LocationTabWidget> {
     widget._setLocation(currentLocation);
     _addLocation(currentLocation);
   }
-
-  // previous json implementation
-  // void _addLocation(location.Location location) async{
-  //   setState(() {
-  //     _savedLocations.add(location);
-  //   });
-
-  //   await ls.writeLocations(_savedLocations);
-
-  // }
 
   void _addLocation(location.Location location) async {
     if (!_savedLocations.contains(location)){
@@ -87,14 +75,6 @@ class _LocationTabWidgetState extends State<LocationTabWidget> {
       _savedLocations = locations;
     });
   }
-
-  // previous json implementation
-  // void _loadLocations() async {
-  //   List<location.Location> locations = await ls.readLocations();
-  //   setState(() {
-  //     _savedLocations = locations;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

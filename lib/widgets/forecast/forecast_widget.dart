@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:weatherapp/scripts/forecast.dart' as forecast;
+import 'package:weatherapp/scripts/forecast/forecast.dart' as forecast;
 import 'package:weatherapp/scripts/time.dart' as time;
 import 'package:weatherapp/scripts/math.dart' as math;
-import 'package:weatherapp/widgets/weather_icon_widget.dart';
+import 'package:weatherapp/widgets/forecast/weather_icon_widget.dart';
 
 class ForecastWidget extends StatelessWidget {
   const ForecastWidget({
