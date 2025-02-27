@@ -6,6 +6,7 @@ import 'package:weatherapp/widgets/location/location_tab_widget.dart';
 import 'package:weatherapp/providers/location_provider.dart';
 import 'package:weatherapp/providers/forecast_provider.dart';
 import 'package:weatherapp/themes/themes.dart' as themes;
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 // TODOS: The TODOs are located in Assignment8-1 in canvas assignments
 void main() {
@@ -29,8 +30,15 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: title,
-      theme: themes.lightTheme,
-      darkTheme: themes.darkTheme,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: settingsProvider.lightThemeSeedColor),
+        brightness: Brightness.light,
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: settingsProvider.darkThemeSeedColor, brightness: Brightness.dark),
+        useMaterial3: true,
+      ),
       themeMode: settingsProvider.darkMode ? ThemeMode.dark : ThemeMode.light,
       home: MyHomePage(title: title),
     );
@@ -96,11 +104,28 @@ class SettingsDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Switch(
-          value: settingsProvider.darkMode,
-          onChanged: (bool value) {
-            settingsProvider.toggleMode();
-          }),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Dark Mode',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+              Switch(
+                value: settingsProvider.darkMode,
+                onChanged: (bool value) {
+                  settingsProvider.toggleMode();
+                },
+              ),
+            ],
+          ),
+            ColorPicker(pickerColor: settingsProvider.darkMode ? settingsProvider.darkThemeSeedColor : settingsProvider.lightThemeSeedColor, onColorChanged: (color) => settingsProvider.setSeedColor(color)),
+          ],)
     );
   }
 }
