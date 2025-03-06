@@ -1,5 +1,6 @@
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:geolocator/geolocator.dart' as geolocator;
+import '../utils/get_image.dart';
 
 class Location {
   final String? state;
@@ -7,13 +8,15 @@ class Location {
   final String? zip;
   final double latitude;
   final double longitude;
+  String? url;
 
   Location(
       {required this.state,
       required this.city,
       required this.zip,
       required this.latitude,
-      required this.longitude});
+      required this.longitude,
+      required this.url});
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
@@ -21,7 +24,8 @@ class Location {
         city: json["city"],
         zip: json["zip"],
         latitude: json["latitude"],
-        longitude: json["longitude"]);
+        longitude: json["longitude"],
+        url: json["url"]);
   }
 
   Map<String, dynamic> toJson() {
@@ -30,7 +34,8 @@ class Location {
       "city": city,
       "zip": zip,
       "latitude": latitude,
-      "longitude": longitude
+      "longitude": longitude,
+      "url": url
     };
   }
 
@@ -63,10 +68,11 @@ Future<Location?> getLocationFromAddress(
     String? state = placemarks[0].administrativeArea;
     String? city = placemarks[0].locality;
     String? zip = placemarks[0].postalCode;
+    String? url = await getImageByQuery("$city $state");
 
     // return a Location object with the complete location
     return Location(
-        city: city, state: state, zip: zip, latitude: lat, longitude: lon);
+        city: city, state: state, zip: zip, latitude: lat, longitude: lon, url: url);
   } on geocoding.NoResultFoundException {
     // throws NoResultFoundException when geocoding fails
     return null;
@@ -83,13 +89,16 @@ Future<Location> getLocationFromGps() async {
   String? city = placemarks[0].locality;
   String? zip = placemarks[0].postalCode;
 
+
+
   // return a Location object with the complete location
   return Location(
       city: city,
       state: state,
       zip: zip,
       latitude: position.latitude,
-      longitude: position.longitude);
+      longitude: position.longitude,
+      url: "");
 }
 
 /// This is a helper function taken from the flutter documentation:

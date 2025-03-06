@@ -35,13 +35,25 @@ class LocationProvider extends ChangeNotifier {
   void setLocation(location.Location loc) async {
     activeLocation = loc;
     if (activeLocation != null){
-      activeLocationImg = await getImageByQuery("${activeLocation!.city} ${activeLocation!.state}");
+      // activeLocationImg = loc.url;
+      if (activeLocation?.url != null && activeLocation?.url != ""){
+        activeLocationImg = loc.url;
+      }else{
+        activeLocationImg = await getImageByQuery("${activeLocation!.city} ${activeLocation!.state}");
+        activeLocation!.url = activeLocationImg;
+        updateLocation(activeLocation!);
+      }
     }
     
     notifyListeners();
     if (activeLocation != null) {
       forecastProvider.initForecasts(activeLocation!);
     }
+  }
+
+  Future<void> updateLocation(location.Location loc) async {
+    final docRef = FirebaseFirestore.instance.collection("locations").doc(loc.zip);
+    await docRef.update(loc.toJson());
   }
 
   Future<void> setLocationFromAddress(
@@ -72,7 +84,6 @@ class LocationProvider extends ChangeNotifier {
     if (! await fs.checkIfEntryExists("locations", "zip", newLocation.zip)){
       FirebaseFirestore.instance.collection("locations").add(newLocation.toJson());
     }
-    
   }
 
   Future<void> deleteLocation(location.Location locToDelete) async {
