@@ -15,7 +15,7 @@ Future<String?> getImageByQuery(String query) async {
     return null;
   }
   Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-  String photoSource = jsonResponse["photos"][0]["src"]["original"];
+  String photoSource = jsonResponse["photos"][0]["src"]["medium"];
   return photoSource;
 }
 

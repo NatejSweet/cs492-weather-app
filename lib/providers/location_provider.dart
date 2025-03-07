@@ -11,7 +11,6 @@ import 'package:weatherapp/utils/get_image.dart';
 // when a new active location is selected, check if it exists, if so use that url
 // if not, query the pexels api
 
-
 class LocationProvider extends ChangeNotifier {
   final ForecastProvider forecastProvider;
 
@@ -23,21 +22,22 @@ class LocationProvider extends ChangeNotifier {
   }
 
   Future<void> setInitialLocation() async {
-    if (await fs.documentCount("locations")  == null || await fs.documentCount("locations") == 0){
+    if (await fs.documentCount("locations") == null ||
+        await fs.documentCount("locations") == 0) {
       setLocation(await location.getLocationFromGps());
-    }
-    else {
-      setLocation(location.Location.fromJson(await fs.getEntryByIndex("locations", 0) ?? {}));
+      if (activeLocation != null) {
+        await addLocation(activeLocation!);
+      }
+    } else {
+      setLocation(location.Location.fromJson(
+          await fs.getEntryByIndex("locations", 0) ?? {}));
     }
     notifyListeners();
   }
 
   void setLocation(location.Location loc) async {
     activeLocation = loc;
-    if (activeLocation != null){
-      activeLocationImg = await getImageByQuery("${activeLocation!.city} ${activeLocation!.state}");
-    }
-    
+
     notifyListeners();
     if (activeLocation != null) {
       forecastProvider.initForecasts(activeLocation!);
@@ -53,7 +53,7 @@ class LocationProvider extends ChangeNotifier {
 
     if (newLocation != null) {
       activeLocation = newLocation;
-      addLocation(newLocation);
+      await addLocation(newLocation);
       notifyListeners();
     }
   }
@@ -64,15 +64,18 @@ class LocationProvider extends ChangeNotifier {
 
     final newLocation = await location.getLocationFromGps();
     activeLocation = newLocation;
-    addLocation(newLocation);
+    await addLocation(newLocation);
     notifyListeners();
   }
 
   Future<void> addLocation(location.Location newLocation) async {
-    if (! await fs.checkIfEntryExists("locations", "zip", newLocation.zip)){
-      FirebaseFirestore.instance.collection("locations").add(newLocation.toJson());
+    newLocation.url = await getImageByQuery(
+        "${activeLocation!.city} ${activeLocation!.state}");
+    if (!await fs.checkIfEntryExists("locations", "zip", newLocation.zip)) {
+      FirebaseFirestore.instance
+          .collection("locations")
+          .add(newLocation.toJson());
     }
-    
   }
 
   Future<void> deleteLocation(location.Location locToDelete) async {

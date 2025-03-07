@@ -3,6 +3,7 @@ import 'package:weatherapp/models/location.dart' as location;
 import 'package:provider/provider.dart';
 import 'package:weatherapp/providers/location_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:weatherapp/widgets/location/location_display_widget.dart';
 
 class LocationTabWidget extends StatefulWidget {
   const LocationTabWidget({super.key});
@@ -149,47 +150,6 @@ class SavedLocationEditWidget extends StatelessWidget {
               ],
             )),
       ),
-    );
-  }
-}
-
-class LocationDisplayWidget extends StatelessWidget {
-  const LocationDisplayWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    var locationProvider = Provider.of<LocationProvider>(context);
-    location.Location? loc = locationProvider.activeLocation;
-
-    return Column(
-      children: [
-        SizedBox(
-          height: 200,
-          child: Image.network(
-            locationProvider.activeLocationImg ?? "",
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) {
-                return child;
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            (loadingProgress.expectedTotalBytes ?? 1)
-                        : null,
-                  ),
-                );
-              }
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return Center(child: Text('Failed to load image'));
-            },
-          ),
-        ),
-        Text(loc != null
-            ? "${loc.city}, ${loc.state} ${loc.zip}"
-            : "No Location Set"),
-      ],
     );
   }
 }
